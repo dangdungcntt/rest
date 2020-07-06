@@ -30,6 +30,8 @@ class Application
     protected string $cachePath = '';
     protected Dispatcher $routerDispatcher;
 
+    protected array $resolvedControllers = [];
+
     public function __construct()
     {
         $this->loop             = Factory::create();
@@ -133,7 +135,7 @@ class Application
 
             [$fqnClass, $method] = $this->parseHandler($handler);
 
-            $controller = new $fqnClass();
+            $controller = $this->resolveController($fqnClass);
 
             if (!empty($method)) {
                 return $controller->{$method}($request, ...$params);
@@ -162,7 +164,7 @@ class Application
         }
     }
 
-    protected function parseHandler(array $handler): array
+    protected function parseHandler($handler): array
     {
         $fqnClass = '';
         $method   = '';
@@ -179,5 +181,20 @@ class Application
         }
 
         return [$fqnClass, $method];
+    }
+
+    protected function resolveController($fqnClass)
+    {
+        if (!empty($this->resolvedControllers[$fqnClass])) {
+            return $this->resolvedControllers[$fqnClass];
+        }
+
+        $controller = new $fqnClass();
+
+        if ($controller->singleton ?? false) {
+            $this->resolvedControllers[$fqnClass] = $controller;
+        }
+
+        return $controller;
     }
 }
