@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Support;
+namespace Core\Support;
 
 use React\Http\Response;
 

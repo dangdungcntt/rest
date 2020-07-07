@@ -1,19 +1,19 @@
 <?php
 
-use App\Application;
-use App\Support\DumpDieException;
-use App\Support\Response;
-use App\Support\ViewResponse;
+use Core\Application;
+use Core\Support\DumpDieException;
+use Core\Support\Response;
+use Core\Support\ViewResponse;
 
 if (!function_exists('app')) {
-    function app()
+    function app(): Application
     {
         return Application::getInstance();
     }
 }
 
 if (!function_exists('view')) {
-    function view(string $viewName, array $data = [])
+    function view(string $viewName, array $data = []): ViewResponse
     {
         return new ViewResponse($viewName, $data);
     }
@@ -27,7 +27,7 @@ if (!function_exists('response')) {
 }
 
 if (!function_exists('env')) {
-    function env(string $key, $default = null): string
+    function env(string $key, $default = null)
     {
         return $_ENV[$key] ?? $default;
     }

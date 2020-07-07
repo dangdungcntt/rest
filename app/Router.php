@@ -1,21 +1,24 @@
 <?php
 
+
 namespace App;
+
 
 use App\Controllers\Api\ApiController;
 use App\Controllers\HomeController;
-use FastRoute\Dispatcher;
+use Core\Router as CoreRouter;
 use FastRoute\RouteCollector;
-use function FastRoute\simpleDispatcher;
+use Psr\Http\Message\ServerRequestInterface;
 
-class Router
+class Router extends CoreRouter
 {
-    public function load(): Dispatcher
+    protected function register(RouteCollector $routes): void
     {
-        return simpleDispatcher(function (RouteCollector $routes) {
-            $routes->get('/', HomeController::class);
-            $routes->get('/home', [HomeController::class, 'home']);
-            $routes->get('/api', [ApiController::class, 'index']);
+        $routes->get('/', HomeController::class);
+        $routes->get('/home', [HomeController::class, 'home']);
+        $routes->get('/api', [ApiController::class, 'index']);
+        $routes->get('/hello/{name}', function (ServerRequestInterface $request, $name) {
+            return "Hello $name";
         });
     }
 }

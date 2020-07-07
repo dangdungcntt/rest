@@ -8,4 +8,9 @@ class HomeController
     {
         return view('home.twig');
     }
+
+    public function home()
+    {
+        return response()->redirect('/');
+    }
 }

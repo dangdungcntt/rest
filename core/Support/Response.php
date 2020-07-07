@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Support;
+namespace Core\Support;
 
 class Response extends \React\Http\Response
 {
