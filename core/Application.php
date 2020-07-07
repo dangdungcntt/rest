@@ -18,7 +18,6 @@ class Application
     protected HttpServer $server;
     protected string $port = '3408';
     protected bool $debug = false;
-    protected bool $shouldCacheRoutes = true;
     protected string $viewPath = '';
     protected string $cachePath = '';
     protected Router $router;
