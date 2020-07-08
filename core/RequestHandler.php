@@ -12,6 +12,7 @@ use Psr\Http\Message\ServerRequestInterface;
 use React\Http\Response;
 use RuntimeException;
 use Throwable;
+use function RingCentral\Psr7\stream_for;
 
 class RequestHandler
 {
@@ -49,12 +50,12 @@ class RequestHandler
 
     protected function handleResponse($response)
     {
-        if ($response instanceof Response) {
-            return $response;
+        if ($response instanceof ViewResponse) {
+            return $response->withBody(stream_for($response->render()));
         }
 
-        if ($response instanceof ViewResponse) {
-            return new Response($response->getStatusCode() ?? 200, $response->getHeaders(), $response->render());
+        if ($response instanceof Response) {
+            return $response;
         }
 
         if (is_array($response)) {

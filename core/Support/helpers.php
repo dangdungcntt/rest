@@ -15,7 +15,9 @@ if (!function_exists('app')) {
 if (!function_exists('view')) {
     function view(string $viewName, array $data = []): ViewResponse
     {
-        return new ViewResponse($viewName, $data);
+        return (new ViewResponse())
+            ->withView($viewName)
+            ->withData($data);
     }
 }
 

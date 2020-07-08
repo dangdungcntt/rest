@@ -2,55 +2,24 @@
 
 namespace Core\Support;
 
-class ViewResponse
+class ViewResponse extends \React\Http\Response
 {
-    protected array $headers = [
-        'Content-Type' => 'text/html'
-    ];
-    protected int $statusCode;
     protected string $viewName;
     protected array $data;
 
-    public function __construct(string $viewName, array $data = [])
+    public function withView(string $viewName): self
     {
         $this->viewName = $viewName;
-        $this->data     = $data;
-    }
-
-    public function withHeaders(array $headers)
-    {
-        $this->headers = $headers;
         return $this;
     }
 
-    public function withHeader(string $key, $value)
+    public function withData(array $data): self
     {
-        $this->headers[$key] = $value;
+        $this->data = $data;
         return $this;
     }
 
-    public function withContentType($value)
-    {
-        return $this->withHeader('Content-Type', $value);
-    }
-
-    public function withStatus($status)
-    {
-        $this->statusCode = $status;
-        return $this;
-    }
-
-    public function getHeaders()
-    {
-        return $this->headers;
-    }
-
-    public function getStatusCode()
-    {
-        return $this->statusCode;
-    }
-
-    public function render()
+    public function render(): string
     {
         return app()->view->render($this->viewName, $this->data);
     }

@@ -7,7 +7,7 @@ class Response extends \React\Http\Response
     public function json(array $data, int $status = 200): Response
     {
         $headers                 = $this->getHeaders();
-        $headers['Content-type'] = 'application/json';
+        $headers['Content-Type'] = 'application/json';
 
         return new Response($status, $headers, json_encode($data));
     }
