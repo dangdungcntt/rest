@@ -103,7 +103,7 @@ class Application
         $this->server = new HttpServer($this->middleware);
 
         $this->server->on('error', function (Exception $e) {
-            logger('Error: '.$e->getMessage().PHP_EOL);
+            logger('Error: '.$e->getMessage());
             if ($e->getPrevious() !== null) {
                 logger('Previous: '.$e->getPrevious()->getMessage().PHP_EOL.$e->getPrevious()->getTraceAsString());
             }

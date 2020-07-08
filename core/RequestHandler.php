@@ -9,6 +9,7 @@ use Core\Support\ViewResponse;
 use FastRoute\Dispatcher;
 use Psr\Http\Message\ServerRequestInterface;
 use React\Http\Response;
+use React\Promise\Promise;
 use RuntimeException;
 use Throwable;
 use function RingCentral\Psr7\stream_for;
@@ -49,6 +50,12 @@ class RequestHandler
 
     protected function handleResponse($response)
     {
+        if ($response instanceof Promise) {
+            return $response->then(function ($res) {
+                return $this->handleResponse($res);
+            });
+        }
+
         if ($response instanceof ViewResponse) {
             return $response->withBody(stream_for($response->render()));
         }
