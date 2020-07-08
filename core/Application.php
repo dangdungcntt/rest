@@ -50,6 +50,11 @@ class Application
         return $this->debug;
     }
 
+    public function getEventLoop(): LoopInterface
+    {
+        return $this->loop;
+    }
+
     public function listen(string $port): self
     {
         $this->port = $port;
