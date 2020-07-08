@@ -54,11 +54,11 @@ class RequestHandler
         }
 
         if ($response instanceof ViewResponse) {
-            return $response->render();
+            return new Response($response->getStatusCode() ?? 200, $response->getHeaders(), $response->render());
         }
 
         if (is_array($response)) {
-            return new Response(200, ['Content-type' => 'application/json'], json_encode($response));
+            return new Response(200, ['Content-Type' => 'application/json'], json_encode($response));
         }
 
         return new Response(200, [], (string) $response);
