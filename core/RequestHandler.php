@@ -96,7 +96,7 @@ class RequestHandler
             }
 
             $exceptionMessage = $throwable->getMessage().PHP_EOL.$throwable->getTraceAsString();
-            if ($this->app->enableDebug()) {
+            if ($this->app->isDebug()) {
                 return new Response(500, ['Content-Type' => 'text/plain'],
                     $exceptionMessage);
             }

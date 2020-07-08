@@ -2,6 +2,7 @@
 
 namespace Core;
 
+use Core\Middleware\RequestBodyJsonParserMiddleware;
 use Exception;
 use React\EventLoop\Factory;
 use React\EventLoop\LoopInterface;
@@ -14,6 +15,7 @@ class Application
 {
     protected static $app;
     public Environment $view;
+    protected array $middleware = [];
     protected LoopInterface $loop;
     protected HttpServer $server;
     protected string $port = '3408';
@@ -24,8 +26,11 @@ class Application
 
     public function __construct()
     {
-        $this->loop  = Factory::create();
-        $this->debug = env('APP_DEBUG') == 'true';
+        $this->loop       = Factory::create();
+        $this->debug      = env('APP_DEBUG') == 'true';
+        $this->middleware = [
+            new RequestBodyJsonParserMiddleware()
+        ];
     }
 
     public static function getInstance(): self
@@ -37,7 +42,7 @@ class Application
         return self::$app = new static();
     }
 
-    public function enableDebug(): bool
+    public function isDebug(): bool
     {
         return $this->debug;
     }
@@ -66,6 +71,12 @@ class Application
         return $this;
     }
 
+    public function addMiddleware(callable $handler)
+    {
+        $this->middleware[] = $handler;
+        return $this;
+    }
+
     public function run(): void
     {
         $this->view = new Environment(new FilesystemLoader($this->viewPath), [
@@ -73,7 +84,9 @@ class Application
             'debug' => $this->debug
         ]);
 
-        $this->server = new HttpServer(new RequestHandler($this, $this->router ?? new Router()));
+        $this->middleware[] = new RequestHandler($this, $this->router ?? new Router());
+
+        $this->server = new HttpServer($this->middleware);
 
         $this->server->on('error', function (Exception $e) {
             echo 'Error: '.$e->getMessage().PHP_EOL;
