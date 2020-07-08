@@ -2,6 +2,7 @@
 
 namespace Core;
 
+use Core\Exceptions\Handler;
 use Core\Middleware\RequestBodyJsonParserMiddleware;
 use Exception;
 use React\EventLoop\Factory;
@@ -15,6 +16,7 @@ class Application
 {
     protected static $app;
     public Environment $view;
+    public Handler $exceptionHandler;
     protected array $middleware = [];
     protected LoopInterface $loop;
     protected HttpServer $server;
@@ -26,11 +28,12 @@ class Application
 
     public function __construct()
     {
-        $this->loop       = Factory::create();
-        $this->debug      = env('APP_DEBUG') == 'true';
-        $this->middleware = [
+        $this->loop             = Factory::create();
+        $this->debug            = env('APP_DEBUG') == 'true';
+        $this->middleware       = [
             new RequestBodyJsonParserMiddleware()
         ];
+        $this->exceptionHandler = new Handler();
     }
 
     public static function getInstance(): self
@@ -65,13 +68,19 @@ class Application
         return $this;
     }
 
-    public function router(Router $router)
+    public function router(Router $router): self
     {
         $this->router = $router;
         return $this;
     }
 
-    public function addMiddleware(callable $handler)
+    public function exceptionHandler(Handler $handler): self
+    {
+        $this->exceptionHandler = $handler;
+        return $this;
+    }
+
+    public function addMiddleware(callable $handler): self
     {
         $this->middleware[] = $handler;
         return $this;
@@ -89,9 +98,9 @@ class Application
         $this->server = new HttpServer($this->middleware);
 
         $this->server->on('error', function (Exception $e) {
-            echo 'Error: '.$e->getMessage().PHP_EOL;
+            logger('Error: '.$e->getMessage().PHP_EOL);
             if ($e->getPrevious() !== null) {
-                echo 'Previous: '.$e->getPrevious()->getMessage().PHP_EOL.$e->getPrevious()->getTraceAsString();
+                logger('Previous: '.$e->getPrevious()->getMessage().PHP_EOL.$e->getPrevious()->getTraceAsString());
             }
         });
 

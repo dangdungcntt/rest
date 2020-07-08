@@ -48,13 +48,22 @@ if (!function_exists('dd')) {
     }
 }
 
-function deleteDir(string $dir, $preserve = false)
-{
-    foreach (glob("$dir/*") as $item) {
-        is_dir($item) ? deleteDir($item) : unlink($item);
+if (!function_exists('logger')) {
+    function logger($message)
+    {
+        printf("[%s] {$message}".PHP_EOL, date('Y-m-d H:i:s'));
     }
+}
 
-    if (!$preserve) {
-        @rmdir($dir);
+if (!function_exists('deleteDir')) {
+    function deleteDir(string $dir, $preserve = false)
+    {
+        foreach (glob("$dir/*") as $item) {
+            is_dir($item) ? deleteDir($item) : unlink($item);
+        }
+
+        if (!$preserve) {
+            @rmdir($dir);
+        }
     }
 }

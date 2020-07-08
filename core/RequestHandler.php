@@ -5,7 +5,6 @@ namespace Core;
 
 
 use Closure;
-use Core\Support\DumpDieException;
 use Core\Support\ViewResponse;
 use FastRoute\Dispatcher;
 use Psr\Http\Message\ServerRequestInterface;
@@ -67,7 +66,6 @@ class RequestHandler
 
     protected function handleRequest(ServerRequestInterface $request, array $routeInfo)
     {
-        $exceptionMessage = '';
         try {
             $handler = $routeInfo[1];
             $params  = array_values($routeInfo[2]);
@@ -90,20 +88,7 @@ class RequestHandler
 
             throw new RuntimeException(sprintf("Class %s is not invokeable", $fqnClass));
         } catch (Throwable $throwable) {
-            if ($throwable instanceof DumpDieException) {
-                return new Response(200, ['Content-Type' => 'text/plain'],
-                    $throwable->getMessage());
-            }
-
-            $exceptionMessage = $throwable->getMessage().PHP_EOL.$throwable->getTraceAsString();
-            if ($this->app->isDebug()) {
-                return new Response(500, ['Content-Type' => 'text/plain'],
-                    $exceptionMessage);
-            }
-        } finally {
-            if ($exceptionMessage) {
-                echo $exceptionMessage;
-            }
+            return $this->app->exceptionHandler->handle($throwable);
         }
     }
 
