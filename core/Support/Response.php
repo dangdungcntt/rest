@@ -4,7 +4,7 @@ namespace Core\Support;
 
 class Response extends \React\Http\Response
 {
-    public function json(array $data, int $status = 200): Response
+    public function json($data, int $status = 200): Response
     {
         $headers                 = $this->getHeaders();
         $headers['Content-Type'] = 'application/json';
