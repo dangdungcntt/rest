@@ -35,17 +35,22 @@ class RequestHandler
 
     public function __invoke(ServerRequestInterface $request)
     {
-        $routeInfo = $this->router->dispatch($request->getMethod(), $request->getUri()->getPath());
-        switch ($routeInfo[0]) {
-            case Dispatcher::NOT_FOUND:
-                return new Response(404, ['Content-Type' => 'text/plain'], 'Not found');
-            case Dispatcher::METHOD_NOT_ALLOWED:
-                return new Response(405, ['Content-Type' => 'text/plain'], 'Method not allowed');
-            case Dispatcher::FOUND:
-                return $this->handleResponse($this->handleRequest($request, $routeInfo));
+        try {
+            $routeInfo = $this->router->dispatch($request->getMethod(), $request->getUri()->getPath());
+            switch ($routeInfo[0]) {
+                case Dispatcher::NOT_FOUND:
+                    return new Response(404, ['Content-Type' => 'text/plain'], 'Not found');
+                case Dispatcher::METHOD_NOT_ALLOWED:
+                    return new Response(405, ['Content-Type' => 'text/plain'], 'Method not allowed');
+                case Dispatcher::FOUND:
+                    return $this->handleResponse($this->handleRequest($request, $routeInfo));
+            }
+
+            throw new RuntimeException('Something went wrong in routing.');
+        } catch (Throwable $throwable) {
+            return $this->app->exceptionHandler->handle($throwable);
         }
 
-        throw new RuntimeException('Something went wrong in routing.');
     }
 
     protected function handleResponse($response)
@@ -53,6 +58,8 @@ class RequestHandler
         if ($response instanceof Promise) {
             return $response->then(function ($res) {
                 return $this->handleResponse($res);
+            }, function (Throwable $throwable) {
+                return $this->app->exceptionHandler->handle($throwable);
             });
         }
 
@@ -73,30 +80,26 @@ class RequestHandler
 
     protected function handleRequest(ServerRequestInterface $request, array $routeInfo)
     {
-        try {
-            $handler = $routeInfo[1];
-            $params  = array_values($routeInfo[2]);
+        $handler = $routeInfo[1];
+        $params  = array_values($routeInfo[2]);
 
-            if ($handler instanceof Closure) {
-                return $handler($request, ...$params);
-            }
-
-            [$fqnClass, $method] = $this->parseHandler($handler);
-
-            $controller = $this->resolveController($fqnClass);
-
-            if (!empty($method)) {
-                return $controller->{$method}($request, ...$params);
-            }
-
-            if (is_callable($controller)) {
-                return $controller($request, ...$params);
-            }
-
-            throw new RuntimeException(sprintf("Class %s is not invokeable", $fqnClass));
-        } catch (Throwable $throwable) {
-            return $this->app->exceptionHandler->handle($throwable);
+        if ($handler instanceof Closure) {
+            return $handler($request, ...$params);
         }
+
+        [$fqnClass, $method] = $this->parseHandler($handler);
+
+        $controller = $this->resolveController($fqnClass);
+
+        if (!empty($method)) {
+            return $controller->{$method}($request, ...$params);
+        }
+
+        if (is_callable($controller)) {
+            return $controller($request, ...$params);
+        }
+
+        throw new RuntimeException(sprintf("Class %s is not invokeable", $fqnClass));
     }
 
     protected function parseHandler($handler): array
