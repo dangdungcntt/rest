@@ -51,6 +51,9 @@ if (!function_exists('dd')) {
 if (!function_exists('logger')) {
     function logger($message)
     {
+        if ($message instanceof Throwable) {
+            $message = $message->getMessage().PHP_EOL.$message->getTraceAsString();
+        }
         printf("[%s] {$message}".PHP_EOL, date('Y-m-d H:i:s'));
     }
 }
