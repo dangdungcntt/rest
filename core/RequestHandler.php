@@ -75,7 +75,7 @@ class RequestHandler
             return new Response(200, ['Content-Type' => 'application/json'], json_encode($response));
         }
 
-        return new Response(200, [], (string) $response);
+        return new Response(200, [], $response);
     }
 
     protected function handleRequest(ServerRequestInterface $request, array $routeInfo)
