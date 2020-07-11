@@ -6,15 +6,16 @@ namespace Core\Exceptions;
 
 use Core\Support\DumpDieException;
 use React\Http\Response;
+use Throwable;
 
 class Handler
 {
     /**
-     * @param  \Throwable  $throwable
+     * @param  Throwable  $throwable
      * @return Response
-     * @throws \Throwable
+     * @throws Throwable
      */
-    public function handle(\Throwable $throwable): Response
+    public function handle(Throwable $throwable): Response
     {
         $exceptionMessage = '';
         if ($throwable instanceof DumpDieException) {
@@ -24,7 +25,7 @@ class Handler
 
         try {
             return $this->unknownException($throwable);
-        } catch (\Throwable $throwable1) {
+        } catch (Throwable $throwable1) {
             if (app()->isDebug()) {
                 $exceptionMessage = $throwable->getMessage().PHP_EOL.$throwable->getTraceAsString();
                 return new Response(500, ['Content-Type' => 'text/plain'],
@@ -39,7 +40,7 @@ class Handler
         }
     }
 
-    protected function unknownException(\Throwable $throwable): Response
+    protected function unknownException(Throwable $throwable): Response
     {
         throw $throwable;
     }

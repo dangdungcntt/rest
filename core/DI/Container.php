@@ -4,9 +4,13 @@
 namespace Core\DI;
 
 
+use Closure;
 use Core\Contracts\DIContainer;
 use Core\Contracts\Singleton;
 use Core\Exceptions\DICannotConstructException;
+use LogicException;
+use ReflectionClass;
+use ReflectionException;
 
 class Container implements DIContainer
 {
@@ -26,7 +30,7 @@ class Container implements DIContainer
      * @param string|null $parentName
      * @return Singleton|mixed
      * @throws DICannotConstructException
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     public function resolve($name, ?string $parentName = null)
     {
@@ -43,7 +47,7 @@ class Container implements DIContainer
                 return $this->resolve($this->bind["$name-$parentName"], $parentName);
             }
 
-            if (array_key_exists($name, $this->bind)) {
+            if (isset($this->bind[$name])) {
                 return $this->resolve($this->bind[$name], $parentName);
             }
         }
@@ -65,11 +69,11 @@ class Container implements DIContainer
      * @param $name
      * @return mixed
      * @throws DICannotConstructException
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     protected function constructInstance($name)
     {
-        if ($name instanceof \Closure) {
+        if ($name instanceof Closure) {
             return $name($this);
         }
 
@@ -82,10 +86,10 @@ class Container implements DIContainer
         }
 
         if (!class_exists($name)) {
-            throw new \LogicException(sprintf('Class %s do not exists ', $name));
+            throw new LogicException(sprintf('Class %s do not exists ', $name));
         }
 
-        $reflection  = new \ReflectionClass($name);
+        $reflection  = new ReflectionClass($name);
         $constructor = $reflection->getConstructor();
 
         if (is_null($constructor) || $constructor->getNumberOfParameters() == 0) {
@@ -102,7 +106,7 @@ class Container implements DIContainer
      * @param $params
      * @return array
      * @throws DICannotConstructException
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     protected function buildParams($name, $params)
     {

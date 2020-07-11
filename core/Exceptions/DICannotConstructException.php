@@ -4,7 +4,9 @@
 namespace Core\Exceptions;
 
 
-class DICannotConstructException extends \Exception
+use Exception;
+
+class DICannotConstructException extends Exception
 {
 
 }

@@ -11,6 +11,7 @@ use React\EventLoop\Factory;
 use React\EventLoop\LoopInterface;
 use React\Http\Server as HttpServer;
 use React\Socket\Server as SocketServer;
+use ReflectionException;
 use Twig\Environment;
 use Twig\Loader\FilesystemLoader;
 
@@ -97,11 +98,11 @@ class Application
     }
 
     /**
-     * @param string $name
-     * @param string|null $parentName
+     * @param  string  $name
+     * @param  string|null  $parentName
      * @return Contracts\Singleton|mixed
      * @throws Exceptions\DICannotConstructException
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     public function make(string $name, ?string $parentName = null)
     {
@@ -123,7 +124,7 @@ class Application
     public function run(): void
     {
         $this->view = new Environment(new FilesystemLoader($this->viewPath), [
-            'cache' => $this->debug ? false : $this->cachePath . '/views',
+            'cache' => $this->debug ? false : $this->cachePath.'/views',
             'debug' => $this->debug
         ]);
 
@@ -132,9 +133,9 @@ class Application
         $this->server = new HttpServer($this->middleware);
 
         $this->server->on('error', function (Exception $e) {
-            logger('Error: ' . $e->getMessage());
+            logger('Error: '.$e->getMessage());
             if ($e->getPrevious() !== null) {
-                logger('Previous: ' . $e->getPrevious()->getMessage() . PHP_EOL . $e->getPrevious()->getTraceAsString());
+                logger('Previous: '.$e->getPrevious()->getMessage().PHP_EOL.$e->getPrevious()->getTraceAsString());
             }
         });
 
@@ -144,7 +145,7 @@ class Application
         if (isset($this->onApplicationBoot)) {
             call_user_func($this->onApplicationBoot, $this);
         }
-        echo "Listening on {$serverAddress}" . PHP_EOL;
+        echo "Listening on {$serverAddress}".PHP_EOL;
         $this->loop->run();
     }
 }
