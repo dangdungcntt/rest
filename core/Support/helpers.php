@@ -6,11 +6,11 @@ use Core\Support\Response;
 use Core\Support\ViewResponse;
 
 if (!function_exists('app')) {
-    function app($class = null)
+    function app(?string $class = null, ?string $parentClass = null)
     {
         if ($class) {
-            list(, $caller) = debug_backtrace(false);
-            return Application::getInstance()->make($class, $caller['class'] ?? null);
+            $parentClass ??= debug_backtrace(false)[1]['class'] ?? null;
+            return Application::getInstance()->make($class, $parentClass);
         }
 
         return Application::getInstance();
