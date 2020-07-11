@@ -28,22 +28,24 @@ class Container implements DIContainer
      * @throws DICannotConstructException
      * @throws \ReflectionException
      */
-    public function resolve(string $name, ?string $parentName = null)
+    public function resolve($name, ?string $parentName = null)
     {
-        if (is_string($parentName) && array_key_exists("$name-$parentName", $this->resolved)) {
-            return $this->resolved["$name-$parentName"];
-        }
+        if (is_string($name)) {
+            if (is_string($parentName) && isset($this->resolved["$name-$parentName"])) {
+                return $this->resolved["$name-$parentName"];
+            }
 
-        if (array_key_exists($name, $this->resolved)) {
-            return $this->resolved[$name];
-        }
+            if (isset($this->resolved[$name])) {
+                return $this->resolved[$name];
+            }
 
-        if (is_string($parentName) && array_key_exists("$name-$parentName", $this->bind)) {
-            return $this->resolve($this->bind["$name-$parentName"], $parentName);
-        }
+            if (is_string($parentName) && isset($this->bind["$name-$parentName"])) {
+                return $this->resolve($this->bind["$name-$parentName"], $parentName);
+            }
 
-        if (array_key_exists($name, $this->bind)) {
-            return $this->resolve($this->bind[$name], $parentName);
+            if (array_key_exists($name, $this->bind)) {
+                return $this->resolve($this->bind[$name], $parentName);
+            }
         }
 
         $object = $this->constructInstance($name);
@@ -76,7 +78,7 @@ class Container implements DIContainer
         }
 
         if (interface_exists($name)) {
-            throw new \LogicException(sprintf('Cannot construct interface %s  without bind. Please bind this interface in Container', $name));
+            throw new DICannotConstructException(sprintf('Cannot construct interface %s without bind. Please bind this interface in Container', $name));
         }
 
         if (!class_exists($name)) {
