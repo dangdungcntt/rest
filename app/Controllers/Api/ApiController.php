@@ -2,7 +2,9 @@
 
 namespace App\Controllers\Api;
 
-class ApiController
+use Core\Contracts\Singleton;
+
+class ApiController implements Singleton
 {
     public function index()
     {

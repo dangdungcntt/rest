@@ -5,6 +5,7 @@ namespace Core;
 
 
 use Closure;
+use Core\Contracts\Singleton;
 use Core\Support\ViewResponse;
 use FastRoute\Dispatcher;
 use Psr\Http\Message\ServerRequestInterface;
@@ -129,7 +130,7 @@ class RequestHandler
 
         $controller = new $fqnClass();
 
-        if ($controller->singleton ?? false) {
+        if ($controller instanceof Singleton) {
             $this->resolvedControllers[$fqnClass] = $controller;
         }
 
