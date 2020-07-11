@@ -2,6 +2,8 @@
 
 namespace Core;
 
+use Closure;
+use Core\DI\Container;
 use Core\Exceptions\Handler;
 use Core\Middleware\RequestBodyJsonParserMiddleware;
 use Exception;
@@ -14,7 +16,8 @@ use Twig\Loader\FilesystemLoader;
 
 class Application
 {
-    protected static $app;
+    protected static Application $app;
+    protected Container $container;
     public Environment $view;
     public Handler $exceptionHandler;
     protected array $middleware = [];
@@ -25,6 +28,7 @@ class Application
     protected string $viewPath = '';
     protected string $cachePath = '';
     protected Router $router;
+    protected Closure $onApplicationBoot;
 
     public function __construct()
     {
@@ -34,11 +38,12 @@ class Application
             new RequestBodyJsonParserMiddleware()
         ];
         $this->exceptionHandler = new Handler();
+        $this->container        = Container::getInstance();
     }
 
     public static function getInstance(): self
     {
-        if (self::$app) {
+        if (isset(self::$app)) {
             return self::$app;
         }
 
@@ -91,10 +96,34 @@ class Application
         return $this;
     }
 
+    /**
+     * @param string $name
+     * @param string|null $parentName
+     * @return Contracts\Singleton|mixed
+     * @throws Exceptions\DICannotConstructException
+     * @throws \ReflectionException
+     */
+    public function make(string $name, ?string $parentName = null)
+    {
+        return $this->container->resolve($name, $parentName);
+    }
+
+    public function bind(string $name, $value, ?string $parentName = null): self
+    {
+        $this->container->bind($name, $value, $parentName);
+        return $this;
+    }
+
+    public function onBoot(Closure $callback): self
+    {
+        $this->onApplicationBoot = $callback;
+        return $this;
+    }
+
     public function run(): void
     {
         $this->view = new Environment(new FilesystemLoader($this->viewPath), [
-            'cache' => $this->cachePath.'/views',
+            'cache' => $this->debug ? false : $this->cachePath . '/views',
             'debug' => $this->debug
         ]);
 
@@ -103,16 +132,19 @@ class Application
         $this->server = new HttpServer($this->middleware);
 
         $this->server->on('error', function (Exception $e) {
-            logger('Error: '.$e->getMessage());
+            logger('Error: ' . $e->getMessage());
             if ($e->getPrevious() !== null) {
-                logger('Previous: '.$e->getPrevious()->getMessage().PHP_EOL.$e->getPrevious()->getTraceAsString());
+                logger('Previous: ' . $e->getPrevious()->getMessage() . PHP_EOL . $e->getPrevious()->getTraceAsString());
             }
         });
 
         $socketServer  = new SocketServer($this->port, $this->loop);
         $serverAddress = str_replace('tcp://', 'http://', $socketServer->getAddress());
         $this->server->listen($socketServer);
-        echo "Listening on {$serverAddress}".PHP_EOL;
+        if (isset($this->onApplicationBoot)) {
+            call_user_func($this->onApplicationBoot, $this);
+        }
+        echo "Listening on {$serverAddress}" . PHP_EOL;
         $this->loop->run();
     }
 }

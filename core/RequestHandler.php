@@ -5,7 +5,6 @@ namespace Core;
 
 
 use Closure;
-use Core\Contracts\Singleton;
 use Core\Support\ViewResponse;
 use FastRoute\Dispatcher;
 use Psr\Http\Message\ServerRequestInterface;
@@ -90,7 +89,7 @@ class RequestHandler
 
         [$fqnClass, $method] = $this->parseHandler($handler);
 
-        $controller = $this->resolveController($fqnClass);
+        $controller = $this->app->make($fqnClass);
 
         if (!empty($method)) {
             return $controller->{$method}($request, ...$params);
@@ -120,20 +119,5 @@ class RequestHandler
         }
 
         return [$fqnClass, $method];
-    }
-
-    protected function resolveController($fqnClass)
-    {
-        if (!empty($this->resolvedControllers[$fqnClass])) {
-            return $this->resolvedControllers[$fqnClass];
-        }
-
-        $controller = new $fqnClass();
-
-        if ($controller instanceof Singleton) {
-            $this->resolvedControllers[$fqnClass] = $controller;
-        }
-
-        return $controller;
     }
 }

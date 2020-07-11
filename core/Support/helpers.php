@@ -6,8 +6,13 @@ use Core\Support\Response;
 use Core\Support\ViewResponse;
 
 if (!function_exists('app')) {
-    function app(): Application
+    function app($class = null)
     {
+        if ($class) {
+            list(, $caller) = debug_backtrace(false);
+            return Application::getInstance()->make($class, $caller['class'] ?? null);
+        }
+
         return Application::getInstance();
     }
 }
