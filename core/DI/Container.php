@@ -119,7 +119,7 @@ class Container implements DIContainer
                     $resolvedParams[] = $param->getDefaultValue();
                     continue;
                 }
-                throw new DICannotConstructException("Cannot construct $name because \${$param->getName()} is not initialize");
+                throw new DICannotConstructException("Cannot construct $name because \${$param->getName()} is not initializable");
             }
 
             try {
