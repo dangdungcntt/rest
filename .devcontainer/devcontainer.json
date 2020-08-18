@@ -19,10 +19,12 @@
 	"extensions": [
 		"felixfbecker.php-debug",
 		"felixfbecker.php-intellisense"
-	]
+	],
 
 	// Use 'forwardPorts' to make a list of ports inside the container available locally.
-	// "forwardPorts": [],
+	"forwardPorts": [
+		3408
+	],
 
 	// Use 'postCreateCommand' to run commands after the container is created.
 	// "postCreateCommand": "php -v",
