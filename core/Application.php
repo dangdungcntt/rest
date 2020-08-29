@@ -115,6 +115,12 @@ class Application
         return $this;
     }
 
+    public function singleton(string $name, $value, ?string $parentName = null): self
+    {
+        $this->container->singleton($name, $value, $parentName);
+        return $this;
+    }
+
     public function onBoot(Closure $callback): self
     {
         $this->onApplicationBoot = $callback;

@@ -12,5 +12,6 @@ Application::getInstance()
     ->router(new Router())
     ->onBoot(function (Application $app) {
         //Bind to container here: $app->bind(...)
+        //Bind singleton to container here: $app->singleton(...) or implement Singleton interface
     })
     ->run();

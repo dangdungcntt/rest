@@ -20,14 +20,15 @@ class Container implements DIContainer
 
     protected array $bind = [];
 
+    protected array $singleton = [];
+
     public static function getInstance()
     {
         return isset(self::$instance) ? self::$instance : self::$instance = new static();
     }
 
     /**
-     * @param string $name
-     * @param string|null $parentName
+     * @param  string|null  $parentName
      * @return Singleton|mixed
      * @throws DICannotConstructException
      * @throws ReflectionException
@@ -35,33 +36,32 @@ class Container implements DIContainer
     public function resolve($name, ?string $parentName = null)
     {
         if (is_string($name)) {
-            if (is_string($parentName) && isset($this->resolved["$name-$parentName"])) {
-                return $this->resolved["$name-$parentName"];
+            $key = $name;
+            if (is_string($parentName)) {
+                $key = "$name-$parentName";
             }
 
-            if (isset($this->resolved[$name])) {
-                return $this->resolved[$name];
+            if (isset($this->resolved[$key])) {
+                return $this->resolved[$key];
             }
 
-            if (is_string($parentName) && isset($this->bind["$name-$parentName"])) {
-                return $this->resolve($this->bind["$name-$parentName"], $parentName);
-            }
-
-            if (isset($this->bind[$name])) {
-                return $this->resolve($this->bind[$name], $parentName);
+            if (isset($this->bind[$key])) {
+                return $this->saveSingletonAndReturn($key, $this->resolve($this->bind[$key], $parentName));
             }
         }
 
-        $object = $this->constructInstance($name);
+        return $this->saveSingletonAndReturn($name, $this->constructInstance($name));
+    }
 
-        if ($object instanceof Singleton) {
-            if (is_string($parentName) && isset($this->bind["$name-$parentName"])) {
-                $this->resolved["$name-$parentName"] = $object;
-            } else {
-                $this->resolved[$name] = $object;
-            }
+    protected function saveSingletonAndReturn($name, $object)
+    {
+        $isSingleton = is_string($name) && (
+                isset($this->singleton[$name])
+                || (!isset($this->bind[$name]) && $object instanceof Singleton)
+            );
+        if ($isSingleton && !isset($this->resolved[$name])) {
+            $this->resolved[$name] = $object;
         }
-
         return $object;
     }
 
@@ -141,6 +141,19 @@ class Container implements DIContainer
             $name = "$name-$parentName";
         }
         $this->bind[$name] = $value;
+        return $this;
+    }
+
+    public function singleton(string $name, $value, ?string $parentName = null)
+    {
+        if (is_string($parentName)) {
+            $name = "$name-$parentName";
+        }
+
+        $this->singleton[$name] = true;
+
+        $this->bind[$name] = $value;
+
         return $this;
     }
 }
