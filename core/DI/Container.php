@@ -36,17 +36,23 @@ class Container implements DIContainer
     public function resolve($name, ?string $parentName = null)
     {
         if (is_string($name)) {
-            $key = $name;
             if (is_string($parentName)) {
                 $key = "$name-$parentName";
+                if (isset($this->resolved[$key])) {
+                    return $this->resolved[$key];
+                }
+
+                if (isset($this->bind[$key])) {
+                    return $this->saveSingletonAndReturn($key, $this->resolve($this->bind[$key], $parentName));
+                }
             }
 
-            if (isset($this->resolved[$key])) {
-                return $this->resolved[$key];
+            if (isset($this->resolved[$name])) {
+                return $this->resolved[$name];
             }
 
-            if (isset($this->bind[$key])) {
-                return $this->saveSingletonAndReturn($key, $this->resolve($this->bind[$key], $parentName));
+            if (isset($this->bind[$name])) {
+                return $this->saveSingletonAndReturn($name, $this->resolve($this->bind[$name], $parentName));
             }
         }
 
