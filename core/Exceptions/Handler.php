@@ -4,7 +4,6 @@
 namespace Core\Exceptions;
 
 
-use Core\Support\DumpDieException;
 use React\Http\Response;
 use Throwable;
 
@@ -20,6 +19,15 @@ class Handler
         $exceptionMessage = '';
         if ($throwable instanceof DumpDieException) {
             return new Response(200, ['Content-Type' => 'text/plain'],
+                $throwable->getMessage());
+        }
+
+
+        if ($throwable instanceof HttpAbortException) {
+            $isJson = json_decode($throwable->getMessage(), true);
+
+            return new Response($throwable->getCode() ?: 500,
+                ['Content-Type' => $isJson ? 'application/json' : 'text/plain'],
                 $throwable->getMessage());
         }
 

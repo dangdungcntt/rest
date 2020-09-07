@@ -1,7 +1,8 @@
 <?php
 
 use Core\Application;
-use Core\Support\DumpDieException;
+use Core\Exceptions\DumpDieException;
+use Core\Exceptions\HttpAbortException;
 use Core\Support\Response;
 use Core\Support\ViewResponse;
 
@@ -50,6 +51,47 @@ if (!function_exists('dd')) {
         ob_start();
         var_dump(...$vars);
         throw new DumpDieException(ob_get_clean());
+    }
+}
+
+
+if (!function_exists('abort')) {
+    /**
+     * @param  int  $status
+     * @param  mixed  $message
+     * @throws HttpAbortException
+     */
+    function abort($status = 500, $message = 'Internal Server Error')
+    {
+        throw new HttpAbortException(is_array($message) ? json_encode($message) : $message, $status);
+    }
+}
+
+if (!function_exists('abort_if')) {
+    /**
+     * @param $condition
+     * @param  int  $status
+     * @param  mixed  $message
+     * @throws HttpAbortException
+     */
+    function abort_if($condition, $status = 500, $message = 'Internal Server Error')
+    {
+        if ($condition) {
+            abort($status, $message);
+        }
+    }
+}
+
+if (!function_exists('abort_unless')) {
+    /**
+     * @param $condition
+     * @param  int  $status
+     * @param  mixed  $message
+     * @throws HttpAbortException
+     */
+    function abort_unless($condition, $status = 500, $message = 'Internal Server Error')
+    {
+        abort_if(!$condition, $status, $message);
     }
 }
 
