@@ -2,12 +2,43 @@
 
 namespace Core\Support;
 
+use Psr\Http\Message\StreamInterface;
 use React\Http\Io\HttpBodyStream;
 use React\Stream\ReadableStreamInterface;
+use RingCentral\Psr7\Response as Psr7Response;
 use function RingCentral\Psr7\stream_for;
 
-class Response extends \React\Http\Response
+class Response extends Psr7Response
 {
+    /**
+     * @param  int  $status  HTTP status code (e.g. 200/404)
+     * @param  array  $headers  additional response headers
+     * @param  string|ReadableStreamInterface|StreamInterface  $body  response body
+     * @param  string  $version  HTTP protocol version (e.g. 1.1/1.0)
+     * @param ?string  $reason  custom HTTP response phrase
+     */
+    public function __construct(
+        $status = 200,
+        array $headers = array(),
+        $body = '',
+        $version = '1.1',
+        $reason = null
+    ) {
+        if ($body instanceof ReadableStreamInterface && !$body instanceof StreamInterface) {
+            $body = new HttpBodyStream($body, null);
+        } elseif (!\is_string($body) && !$body instanceof StreamInterface) {
+            throw new \InvalidArgumentException('Invalid response body given');
+        }
+
+        parent::__construct(
+            $status,
+            $headers,
+            $body,
+            $version,
+            $reason
+        );
+    }
+
     public function stream(ReadableStreamInterface $stream): Response
     {
         return $this->withBody(new HttpBodyStream($stream, null));

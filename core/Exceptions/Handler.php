@@ -4,7 +4,7 @@
 namespace Core\Exceptions;
 
 
-use React\Http\Response;
+use Core\Support\Response;
 use Throwable;
 
 class Handler

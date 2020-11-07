@@ -5,10 +5,10 @@ namespace Core;
 
 
 use Closure;
+use Core\Support\Response;
 use Core\Support\ViewResponse;
 use FastRoute\Dispatcher;
 use Psr\Http\Message\ServerRequestInterface;
-use React\Http\Response;
 use React\Promise\Promise;
 use RuntimeException;
 use Throwable;

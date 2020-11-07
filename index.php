@@ -10,6 +10,11 @@ Application::getInstance()
     ->cachePath(env('CACHE_PATH', __DIR__ . '/storage/cache'))
     ->listen(env('APP_PORT', 3408))
     ->router(new Router())
+//    ->addMiddleware(new Core\Middleware\CorsMiddleware([
+//        'allow_origin' => [
+//            env('CORS_ALLOWED_ORIGIN', '*')
+//        ],
+//    ]))
     ->onBoot(function (Application $app) {
         //Bind to container here: $app->bind(...)
         //Bind singleton to container here: $app->singleton(...) or implement Singleton interface

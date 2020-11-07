@@ -136,7 +136,7 @@ class Application
 
         $this->middleware[] = new RequestHandler($this, $this->router ?? new Router());
 
-        $this->server = new HttpServer($this->middleware);
+        $this->server = new HttpServer($this->loop, ...$this->middleware);
 
         $this->server->on('error', function (Exception $e) {
             logger('Error: '.$e->getMessage());

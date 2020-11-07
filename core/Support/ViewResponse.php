@@ -2,7 +2,7 @@
 
 namespace Core\Support;
 
-class ViewResponse extends \React\Http\Response
+class ViewResponse extends Response
 {
     protected string $viewName;
     protected array $data;
