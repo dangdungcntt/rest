@@ -12,7 +12,7 @@ use Sikei\React\Http\Middleware\CorsMiddlewareAnalysisStrategy as Strategy;
 use Sikei\React\Http\Middleware\CorsMiddlewareConfiguration as Config;
 use function React\Promise\resolve;
 
-final class CorsMiddleware
+class CorsMiddleware
 {
     private AnalyzerInterface $analyzer;
 
