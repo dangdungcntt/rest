@@ -44,11 +44,7 @@ class Application
 
     public static function getInstance(): self
     {
-        if (isset(self::$app)) {
-            return self::$app;
-        }
-
-        return self::$app = new static();
+        return self::$app ??= new static();
     }
 
     public function isDebug(): bool
