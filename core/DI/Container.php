@@ -24,7 +24,7 @@ class Container implements DIContainer
 
     public static function getInstance()
     {
-        return isset(self::$instance) ? self::$instance : self::$instance = new static();
+        return self::$instance ??= new static();
     }
 
     /**
