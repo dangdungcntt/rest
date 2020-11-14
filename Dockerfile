@@ -1,6 +1,4 @@
-FROM php:7.4-cli-alpine
-
-RUN apk add --no-cache composer
+FROM dangdungcntt/php:7.4-cli-composer
 
 WORKDIR /usr/src/app
 
