@@ -9,7 +9,7 @@ use Core\Support\Response;
 use Core\Support\ViewResponse;
 use FastRoute\Dispatcher;
 use Psr\Http\Message\ServerRequestInterface;
-use React\Promise\Promise;
+use React\Promise\PromiseInterface;
 use RuntimeException;
 use Throwable;
 use function RingCentral\Psr7\stream_for;
@@ -55,7 +55,7 @@ class RequestHandler
 
     protected function handleResponse($response)
     {
-        if ($response instanceof Promise) {
+        if ($response instanceof PromiseInterface) {
             return $response->then(function ($res) {
                 return $this->handleResponse($res);
             }, function (Throwable $throwable) {
