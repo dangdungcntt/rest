@@ -79,3 +79,68 @@ autostart=true
 autorestart=true
 ```
 
+<a name="router"></a>
+## Router
+
+Rest using [Fast Route](https://github.com/nikic/FastRoute) for routing. Application routes can be register in `app/Router.php`.
+
+```php
+class Router extends BaseRouter
+{
+    protected function register(RouteCollector $routes): void
+    {
+        $routes->get('/', HomeController::class); //using invokeable controller
+        $routes->get('/home', [HomeController::class, 'home']);
+        $routes->get('/hello/{name}', [HomeController::class, 'hello']);
+        
+        /*
+        $routes->post(...)
+        $routes->put(...)
+        $routes->delete(...)
+        */
+    }
+}
+```
+
+<a name="controller"></a>
+## Controller
+
+The first parameter of controller method always is `ServerRequestInterface`, any route params will following this.
+
+```php
+class HomeController
+{
+    public function __invoke(ServerRequestInterface $request)
+    {
+        $frameworkVersion = Application::VERSION;
+        return view('home.twig', compact('frameworkVersion'));
+    }
+
+    public function home()
+    {
+        return response()->redirect('/');
+    }
+    
+    public function hello(ServerRequestInterface $request, $name)
+    {
+        return "Hello $name";
+    }
+}
+```
+
+<a name="dependency-injection"></a>
+## Dependency Injection
+
+Only `__construct` function can inject dependencies
+
+```php
+class ProductController
+{
+    protected ProductService $productService;
+    
+    public function __construct(ProductService $service)
+    {
+        $this->productService = $service;
+    }
+}
+```
