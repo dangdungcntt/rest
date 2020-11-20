@@ -9,7 +9,7 @@ RUN composer install --prefer-dist --no-progress --no-scripts --no-autoloader \
 
 COPY . /home/app
 
-RUN cp .env.production .env \
+RUN cp .env.example .env \
     && composer dump-autoload --no-scripts --optimize
 
 VOLUME ["/home/app/cache"]
