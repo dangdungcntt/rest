@@ -1,6 +1,6 @@
-# reactphp-template
+# rest-framework
 
-Simple micro service struct with reactphp and twig
+Rest Framework - PHP Framework for ReactPHP Library
 
 ### Run
 ```

@@ -1,7 +1,7 @@
 <?php
 
 use App\Router;
-use Core\Application;
+use Rest\Application;
 
 require_once(__DIR__ . '/bootstrap.php');
 
@@ -10,7 +10,7 @@ Application::getInstance()
     ->cachePath(env('CACHE_PATH', __DIR__ . '/storage/cache'))
     ->listen(env('APP_PORT', 3408))
     ->router(new Router())
-//    ->addMiddleware(new Core\Middleware\CorsMiddleware([
+//    ->addMiddleware(new \Sikei\React\Http\Middleware\CorsMiddleware([
 //        'allow_origin' => [
 //            env('CORS_ALLOWED_ORIGIN', '*')
 //        ],

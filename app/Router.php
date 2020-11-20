@@ -6,19 +6,14 @@ namespace App;
 
 use App\Controllers\Api\ApiController;
 use App\Controllers\HomeController;
-use Core\Router as CoreRouter;
 use FastRoute\RouteCollector;
-use Psr\Http\Message\ServerRequestInterface;
+use Rest\Router as BaseRouter;
 
-class Router extends CoreRouter
+class Router extends BaseRouter
 {
     protected function register(RouteCollector $routes): void
     {
         $routes->get('/', HomeController::class);
         $routes->get('/home', [HomeController::class, 'home']);
-        $routes->get('/api', [ApiController::class, 'index']);
-        $routes->get('/hello/{name}', function (ServerRequestInterface $request, $name) {
-            return "Hello $name";
-        });
     }
 }

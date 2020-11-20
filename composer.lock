@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "319814ec595c0f55fc71acdb290c9996",
+    "content-hash": "e6fd8b74412a20671bf2b285d3114031",
     "packages": [
         {
             "name": "christoph-kluge/reactphp-http-cors-middleware",
@@ -166,6 +166,63 @@
                 }
             ],
             "time": "2020-04-13T13:17:36+00:00"
+        },
+        {
+            "name": "nddcoder/rest-framework",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/dangdungcntt/rest-framework.git",
+                "reference": "f67c5cc2aff3f60f44d76864b1378f66168a73aa"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/dangdungcntt/rest-framework/zipball/f67c5cc2aff3f60f44d76864b1378f66168a73aa",
+                "reference": "f67c5cc2aff3f60f44d76864b1378f66168a73aa",
+                "shasum": ""
+            },
+            "require": {
+                "christoph-kluge/reactphp-http-cors-middleware": "^2.0",
+                "ext-curl": "*",
+                "ext-json": "*",
+                "ext-mbstring": "*",
+                "ext-openssl": "*",
+                "nikic/fast-route": "^1.3",
+                "php": "^7.4|^8.0",
+                "react/http": "^1.1",
+                "twig/twig": "^3.0",
+                "vlucas/phpdotenv": "^5.0"
+            },
+            "default-branch": true,
+            "type": "library",
+            "autoload": {
+                "files": [
+                    "src/Support/helpers.php"
+                ],
+                "psr-4": {
+                    "Rest\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Dung Nguyen Dang",
+                    "email": "dangdungcntt@gmail.com"
+                }
+            ],
+            "description": "Framework for reactphp",
+            "keywords": [
+                "framework",
+                "reactphp"
+            ],
+            "support": {
+                "issues": "https://github.com/dangdungcntt/rest-framework/issues",
+                "source": "https://github.com/dangdungcntt/rest-framework/tree/master"
+            },
+            "time": "2020-11-20T09:54:14+00:00"
         },
         {
             "name": "neomerx/cors-psr7",
@@ -1507,13 +1564,14 @@
     ],
     "packages-dev": [],
     "aliases": [],
-    "minimum-stability": "stable",
-    "stability-flags": [],
-    "prefer-stable": false,
+    "minimum-stability": "dev",
+    "stability-flags": {
+        "nddcoder/rest-framework": 20
+    },
+    "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
-        "php": "^7.4",
-        "ext-json": "*"
+        "php": "^7.4|^8.0"
     },
     "platform-dev": [],
     "plugin-api-version": "2.0.0"

@@ -1,18 +1,18 @@
 FROM dangdungcntt/php:7.4-cli-composer
 
-WORKDIR /usr/src/app
+WORKDIR /home/app
 
 COPY composer.* ./
 
 RUN composer install --prefer-dist --no-progress --no-scripts --no-autoloader \
     && rm -rf /root/.composer
 
-COPY . /usr/src/app
+COPY . /home/app
 
 RUN cp .env.production .env \
     && composer dump-autoload --no-scripts --optimize
 
-VOLUME ["/usr/src/app/cache"]
+VOLUME ["/home/app/cache"]
 
 EXPOSE 3408
 
