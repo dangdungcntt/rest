@@ -151,15 +151,13 @@ Bind class to container
 Application::getInstance()
     ->onBoot(function (Application $app) {
         $app->bind(ProductServiceInterface::class, fn($app) => new ProductServiceImpl());
-    })
+    });
 ```
 
 <a name="singleton"></a>
 #### Singleton
 
 To make a class is singleton, you can make class implemnt `Singleton` interface or bind to container using `singleton` method
-
-Bind class to container
 
 ```php
 
@@ -174,7 +172,7 @@ class SlackService extends Singleton {
 Application::getInstance()
     ->onBoot(function (Application $app) {
         $app->singleton(SlackService::class, SlackService::class);
-    })
+    });
 ```
 
 <a name="resolve-from-container"></a>
