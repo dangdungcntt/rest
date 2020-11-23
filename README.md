@@ -215,7 +215,7 @@ class ProductController
 
 ```php
 $application = app(); //return Application instance
-$classInstace = app(ClassName::class); //ClassName instance
+$classInstance = app(ClassName::class); //ClassName instance
 ```
 
 `view`: return `ViewResponse` instance. Accept view name and optional data need pass to view
