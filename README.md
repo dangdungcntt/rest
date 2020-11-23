@@ -11,7 +11,7 @@ Rest Framework - PHP Framework for ReactPHP Library
 - [Deploy](#deploy)
     - [Using Docker](#using-docker)
     - [Using Supervisor](#using-supervisor)
-- Usage(#usage)
+- [Usage](#usage)
     - [Router](#router)
     - [Dependency Injection](#dependency-injection)
         - [Singleton](#singleton)
