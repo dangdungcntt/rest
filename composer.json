@@ -14,7 +14,7 @@
     },
     "require": {
         "php": "^7.4|^8.0",
-        "nddcoder/rest-framework": "^1.0"
+        "nddcoder/rest-framework": "^1.1"
     },
     "autoload": {
         "psr-4": {
