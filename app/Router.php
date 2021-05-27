@@ -1,10 +1,7 @@
 <?php
 
-
 namespace App;
 
-
-use App\Controllers\Api\ApiController;
 use App\Controllers\HomeController;
 use FastRoute\RouteCollector;
 use Rest\Router as BaseRouter;
